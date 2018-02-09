@@ -5,7 +5,7 @@ export PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 
 #export MAX_INSTANCE INSTANCE_TYPE REQUESTER CREATOR TICKET_ID SECURITY_CHECK OWNER
 #PROJECT_ROOT="/var/lib/jenkins/topfan"
-source ${HOME}/testkey
+source /var/lib/jenkins/testkey
 source ${PROJECT_ROOT}/varfile
 TF_MODE=${1}
 terraform_run() {
