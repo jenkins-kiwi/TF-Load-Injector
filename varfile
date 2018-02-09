@@ -11,7 +11,7 @@ export TF_VAR_project="TopFan_Load_Injector"
 export TF_VAR_instance_type="${INSTANCE_TYPE}"
 export TF_VAR_requester="${REQUESTER}"
 export TF_VAR_creator="${CREATOR}"
-export TF_VAR_owner="${OWNER}"
+export TF_VAR_owner="TopFan"
 export TF_VAR_ticket_id="${TICKET_ID}"
 
 RED='\033[0;31m'
