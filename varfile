@@ -9,6 +9,8 @@ TERRAFORM="${PROJECT_ROOT}/bin/terraform"
 export AWS_ACCESS_KEY_ID="${TOPFAN_ACCESS_KEY}"
 export AWS_SECRET_ACCESS_KEY="${TOPFAN_SECRET_KEY}"
 export TF_VAR_project="TopFan_Load_Injector"
+
+export TF_VAR_max_instance="${MAX_INSTANCE}"
 export TF_VAR_instance_type="${INSTANCE_TYPE}"
 export TF_VAR_requester="${REQUESTER}"
 export TF_VAR_creator="${CREATOR}"
