@@ -1,6 +1,6 @@
 # ENVIRONMENT Configs - MITE
 
-export PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+# export PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 TF_RUN_YES="yes"
 
 TF_DIRECTORY="infra"

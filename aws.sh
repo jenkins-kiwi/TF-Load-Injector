@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 export PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+  [ ! -z "$PROJECT_ROOT" ] || export PROJECT_ROOT="/var/lib/jenkins/tf-load-injectors"
+
 # bash ~/topfan/aws.sh ${MAX_INSTANCE} ${INSTANCE_TYPE} ${REQUESTER}  ${CREATOR} ${TICKET_ID} ${SECURITY_CHECK}
 # export MAX_INSTANCE=1 INSTANCE_TYPE=t2.micro REQUESTER=Ankit CREATOR=harry TICKET_ID=12 SECURITY_CHECK=welcome OWNER=TopFan
 
