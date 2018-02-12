@@ -25,8 +25,8 @@ terraform_run() {
 
   if [[ "${TF_MODE}" == "destroy" ]]; then
     $TERRAFORM destroy -force -state="${STATE_FILE}"
-    echo "return_val: ${return_val}"
     return_val=$?
+    echo "return_val: ${return_val}"
     [[ ${return_val} -ne 0 ]] && \
       echo -e "${RED}WARNING: Terraform plan not applied successfully.${NC}" >&2 && \
       exit 1
@@ -58,6 +58,7 @@ terraform_execute(){
     echo "Executing Plan ${PROJECT_NAME}"
     ${TERRAFORM} plan -state=${STATE_FILE} -detailed-exitcode
     TF_RETVAL=${?}
+    echo "TF_RETVAL :${TF_RETVAL}"
   fi
   case ${TF_RETVAL} in
     0)
@@ -100,16 +101,38 @@ user_validation(){
 
 if [[ "${TF_MODE}" == "destroy" && "${SECURITY_CHECK}" == "${TF_PASS}" ]]; then
   echo "ENVIRONMENT is Destroying..."
-   terraform_execute
- elif [[ "${TF_MODE}" != "destroy" ]]; then
-   user_validation
+  terraform_execute
+elif [[ "${TF_MODE}" != "destroy" ]]; then
+  user_validation
 else
   echo "Incorrect SECURITY CHECK Value."
 
 fi
 
+echo "JOB_STATUS_START"
+echo Basic Details about This Job:
+echo "Task Requester : ${REQUESTER}"
+echo "Job Executed By : ${CREATOR}"
+
 if [[  "${TF_MODE}" == "apply" ]]; then
+  echo "TASK : Create ${MAX_INSTANCE} ${INSTANCE_TYPE} Instance for ${REQUESTER}"
+  [[ ${ret_val} -ne  0 ]] && \
+    echo -e "${RED}WARNING: Terraform plan not applied successfully.${NC}"
+  [[ ${ret_val} -eq  0 ]] && \
+    echo -e "${GREEN} ${MAX_INSTANCE} Has Been Created Successfully ${NC}"
   PUBLIC_IP=$($TERRAFORM output -state="${STATE_FILE}" PUBLIC_IPS)
   export PUBLIC_IP
-  echo "Public IP ${PUBLIC_IP}"
+  echo "Public IP :"
+  echo "${PUBLIC_IP}"
+
+elif [[ "${TF_MODE}" == "distroy" ]]; then
+  [[ ${return_val} -eq 0 ]] && \
+    echo "TASK : TERMINATE Instance - Ticket ID ${TICKET_ID}"
+  echo -e "${GREEN}SUCCESSFUL: ENVIRONMENT SUCCESSFULLY TERMINATED.${NC}"
+
+  [[ ${return_val} -ne 0 ]] && \
+    echo -e "${RED}WARNING: Terraform plan not applied successfully.${NC}"
+elif [[  "${TF_MODE}" == "plan" ]]; then
+  echo "Testing Code."
 fi
+echo "JOB_STATUS_END"
