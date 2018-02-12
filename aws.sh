@@ -9,6 +9,7 @@ export PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 #PROJECT_ROOT="/var/lib/jenkins/topfan"
 source /var/lib/jenkins/testkey
 source ${PROJECT_ROOT}/varfile
+TF_MODE=${1}
 
 terraform_run() {
   [[ "${TF_MODE}" == "plan" ]] && exit 0
@@ -85,7 +86,7 @@ user_validation(){
     if [[ "${SECURITY_CHECK}" == "${TF_PASS}" ]]; then
       echo "Hi ${CREATOR}, You are Authorized user"
       echo "This job executed by ${CREATOR}"
-      TF_MODE=${1}
+
       terraform_execute
 
     else
