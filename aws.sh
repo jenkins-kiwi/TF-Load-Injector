@@ -126,8 +126,8 @@ if [[  "${TF_MODE}" == "apply" ]]; then
   echo "${PUBLIC_IP}"
 
 elif [[ "${TF_MODE}" == "distroy" ]]; then
+  echo "TASK : TERMINATE Instance - Ticket ID ${TICKET_ID}"
   [[ ${return_val} -eq 0 ]] && \
-    echo "TASK : TERMINATE Instance - Ticket ID ${TICKET_ID}"
   echo "SUCCESSFUL: ENVIRONMENT SUCCESSFULLY TERMINATED."
 
   [[ ${return_val} -ne 0 ]] && \
