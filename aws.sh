@@ -117,9 +117,9 @@ echo "Job Executed By : ${CREATOR}"
 if [[  "${TF_MODE}" == "apply" ]]; then
   echo "TASK : Create ${MAX_INSTANCE} ${INSTANCE_TYPE} Instance for ${REQUESTER}"
   [[ ${ret_val} -ne  0 ]] && \
-    echo -e "${RED}WARNING: Terraform plan not applied successfully.${NC}"
+    echo "WARNING: Terraform plan not applied successfully."
   [[ ${ret_val} -eq  0 ]] && \
-    echo -e "${GREEN} ${MAX_INSTANCE} Has Been Created Successfully ${NC}"
+    echo "${MAX_INSTANCE} Has Been Created Successfully"
   PUBLIC_IP=$($TERRAFORM output -state="${STATE_FILE}" PUBLIC_IPS)
   export PUBLIC_IP
   echo "Public IP :"
@@ -128,10 +128,10 @@ if [[  "${TF_MODE}" == "apply" ]]; then
 elif [[ "${TF_MODE}" == "distroy" ]]; then
   [[ ${return_val} -eq 0 ]] && \
     echo "TASK : TERMINATE Instance - Ticket ID ${TICKET_ID}"
-  echo -e "${GREEN}SUCCESSFUL: ENVIRONMENT SUCCESSFULLY TERMINATED.${NC}"
+  echo "SUCCESSFUL: ENVIRONMENT SUCCESSFULLY TERMINATED."
 
   [[ ${return_val} -ne 0 ]] && \
-    echo -e "${RED}WARNING: Terraform plan not applied successfully.${NC}"
+    echo "WARNING: Terraform plan not applied successfully."
 elif [[  "${TF_MODE}" == "plan" ]]; then
   echo "Testing Code."
 fi
