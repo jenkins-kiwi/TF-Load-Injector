@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 export PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+export STATE_FILE=${PROJECT_ROOT}/state/terraform.tfstate
 # [ ! -z "$PROJECT_ROOT" ] || export PROJECT_ROOT="/var/lib/jenkins/tf-load-injectors"
 
 # bash ~/topfan/aws.sh ${MAX_INSTANCE} ${INSTANCE_TYPE} ${REQUESTER}  ${CREATOR} ${TICKET_ID} ${SECURITY_CHECK}
@@ -108,6 +109,7 @@ else
 fi
 
 if [[  "${TF_MODE}" == "apply" ]]; then
-  export PUBLIC_IP=$($TERRAFORM output -state="${STATE_FILE}" PUBLIC_IPS)
-  echo "Public IP ${PUBLIC_IPS}"
+  PUBLIC_IP=$($TERRAFORM output -state="${STATE_FILE}" PUBLIC_IPS)
+  export PUBLIC_IP
+  echo "Public IP ${PUBLIC_IP}""
 fi
