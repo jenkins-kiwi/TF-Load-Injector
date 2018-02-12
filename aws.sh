@@ -106,3 +106,8 @@ else
   echo "Incorrect SECURITY CHECK Value."
 
 fi
+
+if [[  "${TF_MODE}" == "apply" ]]; then
+  export PUBLIC_IP=$($TERRAFORM output -state="state/terraform.tfstate" PUBLIC_IPS)
+  echo "${PUBLIC_IPS}"
+fi
