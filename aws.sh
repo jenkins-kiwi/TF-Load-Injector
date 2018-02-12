@@ -111,5 +111,5 @@ fi
 if [[  "${TF_MODE}" == "apply" ]]; then
   PUBLIC_IP=$($TERRAFORM output -state="${STATE_FILE}" PUBLIC_IPS)
   export PUBLIC_IP
-  echo "Public IP ${PUBLIC_IP}""
+  echo "Public IP ${PUBLIC_IP}"
 fi
