@@ -108,6 +108,6 @@ else
 fi
 
 if [[  "${TF_MODE}" == "apply" ]]; then
-  export PUBLIC_IP=$($TERRAFORM output -state="state/terraform.tfstate" PUBLIC_IPS)
-  echo "${PUBLIC_IPS}"
+  export PUBLIC_IP=$($TERRAFORM output -state="${STATE_FILE}" PUBLIC_IPS)
+  echo "Public IP ${PUBLIC_IPS}"
 fi
