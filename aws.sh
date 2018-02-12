@@ -78,6 +78,7 @@ terraform_execute(){
 }
 
 user_validation(){
+
   if [[ "${#TICKET_ID}" != "4" || ${TICKET_ID} =~ [^[:digit:]] ]]; then
     #statements
     echo "WARNING : Invalid Ticket ID : ${TICKET_ID}, Please check and Try Again"
@@ -95,4 +96,10 @@ user_validation(){
   fi
 }
 
-user_validation
+
+if [[ "${TF_MODE}" == "destroy" && "${SECURITY_CHECK}" == "${TF_PASS}" ]]; then
+  echo "ENVIRONMENT is Destroying..."
+   terraform_execute
+else
+  user_validation
+fi
