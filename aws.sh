@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 export PROJECT_ROOT="$(git rev-parse --show-toplevel)"
-  [ ! -z "$PROJECT_ROOT" ] || export PROJECT_ROOT="/var/lib/jenkins/tf-load-injectors"
+# [ ! -z "$PROJECT_ROOT" ] || export PROJECT_ROOT="/var/lib/jenkins/tf-load-injectors"
 
 # bash ~/topfan/aws.sh ${MAX_INSTANCE} ${INSTANCE_TYPE} ${REQUESTER}  ${CREATOR} ${TICKET_ID} ${SECURITY_CHECK}
 # export MAX_INSTANCE=1 INSTANCE_TYPE=t2.micro REQUESTER=Ankit CREATOR=harry TICKET_ID=12 SECURITY_CHECK=welcome OWNER=TopFan
@@ -9,7 +9,7 @@ export PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 #PROJECT_ROOT="/var/lib/jenkins/topfan"
 source /var/lib/jenkins/testkey
 source ${PROJECT_ROOT}/varfile
-TF_MODE=${1}
+
 terraform_run() {
   [[ "${TF_MODE}" == "plan" ]] && exit 0
 
@@ -76,4 +76,22 @@ terraform_execute(){
   esac
 }
 
-terraform_execute
+user_validation(){
+  if [[ "${#TICKET_ID}" != "4" || ${TICKET_ID} =~ [^[:digit:]] ]]; then
+    #statements
+    echo "WARNING : Invalid Ticket ID : ${TICKET_ID}, Please check and Try Again"
+  else
+
+    if [[ "${SECURITY_CHECK}" == "${TF_PASS}" ]]; then
+      echo "Hi ${CREATOR}, You are Authorized user"
+      echo "This job executed by ${CREATOR}"
+      TF_MODE=${1}
+      terraform_execute
+
+    else
+      echo "Sorry !! You are not Authorized to execute this job. Contact to Jenkins Admin"
+    fi
+  fi
+}
+
+user_validation

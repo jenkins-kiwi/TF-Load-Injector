@@ -2,7 +2,7 @@
 
 # export PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 TF_RUN_YES="yes"
-
+TF_PASS="topfan@kiwi"
 TF_DIRECTORY="infra"
 TERRAFORM="${PROJECT_ROOT}/bin/terraform"
 
