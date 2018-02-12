@@ -100,6 +100,9 @@ user_validation(){
 if [[ "${TF_MODE}" == "destroy" && "${SECURITY_CHECK}" == "${TF_PASS}" ]]; then
   echo "ENVIRONMENT is Destroying..."
    terraform_execute
+ elif [[ "${TF_MODE}" != "destroy" ]]; then
+   user_validation
 else
-  user_validation
+  echo "Incorrect SECURITY CHECK Value."
+
 fi
