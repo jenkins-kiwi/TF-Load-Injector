@@ -10,7 +10,26 @@ export STATE_FILE=${PROJECT_ROOT}/state/terraform.tfstate
 #PROJECT_ROOT="/var/lib/jenkins/topfan"
 source /var/lib/jenkins/testkey
 source ${PROJECT_ROOT}/varfile
-TF_MODE=${1}
+
+case ${1} in
+  Testing)
+    TF_MODE="plan"
+    ;;
+  Create)
+    TF_MODE="apply"
+    ;;
+  Terminate)
+    TF_MODE="destroy"
+    ;;
+  *)
+    ERROR="invalid argument"
+    echo "${ERROR}"
+    exit 1
+    ;;
+
+esac
+
+
 
 terraform_run() {
   [[ "${TF_MODE}" == "plan" ]] && exit 0
@@ -28,7 +47,8 @@ terraform_run() {
     return_val=$?
     echo "return_val: ${return_val}"
     [[ ${return_val} -ne 0 ]] && \
-      echo -e "${RED}WARNING: Terraform plan not applied successfully.${NC}" >&2 && \
+      ERROR="WARNING: Terraform plan not applied successfully." && \
+      echo -e "${RED}${ERROR}${NC}" >&2 && \
       exit 1
   else
     $TERRAFORM apply -state="${STATE_FILE}" -input=false -auto-approve
@@ -36,7 +56,8 @@ terraform_run() {
     echo "ret_val: ${ret_val}"
 
     [[ ${ret_val} -ne  0 ]] && \
-      echo -e "${RED}WARNING: Terraform plan not applied successfully.${NC}" >&2 && \
+      ERROR="WARNING: Terraform plan not applied successfully." && \
+      echo -e "${RED} ${ERROR} ${NC}" >&2 && \
       exit 1
   fi
 }
@@ -93,7 +114,8 @@ user_validation(){
       terraform_execute
 
     else
-      echo "Sorry !! You are not Authorized to execute this job. Contact to Jenkins Admin"
+      ERROR="Sorry !! You are not Authorized to execute this job. Contact to Jenkins Admin"
+      echo "${ERROR}"
     fi
   fi
 }
@@ -105,7 +127,8 @@ if [[ "${TF_MODE}" == "destroy" && "${SECURITY_CHECK}" == "${TF_PASS}" ]]; then
 elif [[ "${TF_MODE}" != "destroy" ]]; then
   user_validation
 else
-  echo "Incorrect SECURITY CHECK Value."
+  ERROR="Incorrect SECURITY CHECK Value."
+  echo "${ERROR}"
 
 fi
 
@@ -133,6 +156,8 @@ elif [[ "${TF_MODE}" == "destroy" ]]; then
   [[ ${return_val} -ne 0 ]] && \
     echo "WARNING: Terraform plan not applied successfully."
 elif [[  "${TF_MODE}" == "plan" ]]; then
-  echo "Testing Code."
+  echo "Code Testing..."
 fi
+
+echo "JOB STATUS : ${ERROR}"
 echo "JOB_STATUS_END"

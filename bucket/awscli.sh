@@ -1,3 +1,5 @@
 
 AWS_ACCESS_KEY_ID=ABCD 
 AWS_SECRET_ACCESS_KEY=EF1234
+
+aws ec2 instance-describe
