@@ -11,6 +11,7 @@ export STATE_FILE=${PROJECT_ROOT}/state/terraform.tfstate
 source /var/lib/jenkins/testkey
 source ${PROJECT_ROOT}/varfile
 
+echo "executing mode ${1}"
 case ${1} in
   Testing)
     TF_MODE="plan"
@@ -50,6 +51,8 @@ terraform_run() {
       ERROR="WARNING: Terraform plan not applied successfully." && \
       echo -e "${RED}${ERROR}${NC}" >&2 && \
       exit 1
+
+
   else
     $TERRAFORM apply -state="${STATE_FILE}" -input=false -auto-approve
     ret_val=$?
@@ -159,5 +162,5 @@ elif [[  "${TF_MODE}" == "plan" ]]; then
   echo "Code Testing..."
 fi
 
-echo "JOB STATUS : ${ERROR}"
+echo "JOB STATUS : ${msg} ${ERROR}"
 echo "JOB_STATUS_END"
