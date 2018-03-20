@@ -4,11 +4,11 @@ export STATE_FILE=${PROJECT_ROOT}/state/terraform.tfstate
 # [ ! -z "$PROJECT_ROOT" ] || export PROJECT_ROOT="/var/lib/jenkins/tf-load-injectors"
 
 # bash ~/topfan/aws.sh ${MAX_INSTANCE} ${INSTANCE_TYPE} ${REQUESTER}  ${CREATOR} ${TICKET_ID} ${SECURITY_CHECK}
-# export MAX_INSTANCE=1 INSTANCE_TYPE=t2.micro REQUESTER=Ankit CREATOR=harry TICKET_ID=12 SECURITY_CHECK=welcome OWNER=TopFan
+# export MAX_INSTANCE=1 INSTANCE_TYPE=t2.micro REQUESTER=Ankit CREATOR=harry TICKET_ID=1112 SECURITY_CHECK=topfan@kiwi OWNER=TopFan
 
 #export MAX_INSTANCE INSTANCE_TYPE REQUESTER CREATOR TICKET_ID SECURITY_CHECK OWNER
-#PROJECT_ROOT="/var/lib/jenkins/topfan"
-source /var/lib/jenkins/testkey
+#source /var/lib/jenkins/testkey
+source ~/aws_keys.sh
 source ${PROJECT_ROOT}/varfile
 
 echo "executing mode ${1}"
@@ -33,7 +33,10 @@ esac
 
 
 terraform_run() {
-  [[ "${TF_MODE}" == "plan" ]] && exit 0
+  [[ "${TF_MODE}" == "plan" ]] && \
+  msg="Plan Has been Executed Successfully." # && \
+  # echo "${msg}" && \
+  # exit 0
 
   if [[ "${TF_RUN_YES}" != "yes" ]]; then
     echo; read -e -p "Are you happy with this plan (yes/no)? " TF_RUN_YES
@@ -41,27 +44,31 @@ terraform_run() {
   fi
 
   echo
-  echo "RUN: Applying Terraform with state file ${STATE_FILE}"
+  # echo "RUN: Applying Terraform with state file ${STATE_FILE}"
 
   if [[ "${TF_MODE}" == "destroy" ]]; then
     $TERRAFORM destroy -force -state="${STATE_FILE}"
     return_val=$?
     echo "return_val: ${return_val}"
+    [[ ${return_val} -eq 0 ]] && \
+      msg="SUCCESSFUL: Instance Has Been Terminated."
+
     [[ ${return_val} -ne 0 ]] && \
       ERROR="WARNING: Terraform plan not applied successfully." && \
       echo -e "${RED}${ERROR}${NC}" >&2 && \
       exit 1
 
-
   else
-    $TERRAFORM apply -state="${STATE_FILE}" -input=false -auto-approve
-    ret_val=$?
-    echo "ret_val: ${ret_val}"
+  if [[ "${TF_MODE}" == "apply" ]]; then
+  $TERRAFORM apply -state="${STATE_FILE}" -input=false -auto-approve
+  ret_val=$?
+  echo "ret_val: ${ret_val}"
 
-    [[ ${ret_val} -ne  0 ]] && \
-      ERROR="WARNING: Terraform plan not applied successfully." && \
-      echo -e "${RED} ${ERROR} ${NC}" >&2 && \
-      exit 1
+  [[ ${ret_val} -ne  0 ]] && \
+    ERROR="WARNING: Terraform plan not applied successfully." && \
+    echo -e "${RED} ${ERROR} ${NC}" #>&2 && \
+    #exit 1
+fi
   fi
 }
 
@@ -82,11 +89,11 @@ terraform_execute(){
     echo "Executing Plan ${PROJECT_NAME}"
     ${TERRAFORM} plan -state=${STATE_FILE} -detailed-exitcode
     TF_RETVAL=${?}
-    echo "TF_RETVAL :${TF_RETVAL}"
+   echo "TF_RETVAL :${TF_RETVAL}"
   fi
   case ${TF_RETVAL} in
     0)
-      msg="SUCCESSFUL: No updates required by Terraform."
+     msg="SUCCESSFUL: No updates required by Terraform."
       echo; echo "${msg}"
       ;;
     1)
@@ -132,7 +139,6 @@ elif [[ "${TF_MODE}" != "destroy" ]]; then
 else
   ERROR="Incorrect SECURITY CHECK Value."
   echo "${ERROR}"
-
 fi
 
 echo "JOB_STATUS_START"
@@ -146,6 +152,7 @@ if [[  "${TF_MODE}" == "apply" ]]; then
     echo "WARNING: Terraform plan not applied successfully."
   [[ ${ret_val} -eq  0 ]] && \
     echo "${MAX_INSTANCE} Has Been Created Successfully"
+    msg="Congratulations!! You have Created ${MAX_INSTANCE} instance on Your AWS. "
   PUBLIC_IP=$($TERRAFORM output -state="${STATE_FILE}" PUBLIC_IPS)
   export PUBLIC_IP
   echo "Public IP :"
@@ -153,13 +160,15 @@ if [[  "${TF_MODE}" == "apply" ]]; then
 
 elif [[ "${TF_MODE}" == "destroy" ]]; then
   echo "TASK : TERMINATE Instance - Ticket ID ${TICKET_ID}"
-  [[ ${return_val} -eq 0 ]] && \
-  echo "SUCCESSFUL: ENVIRONMENT SUCCESSFULLY TERMINATED."
+   # [[ ${return_val} -eq 0 ]] && \
+   # echo "${msg} ${ERROR}"
 
   [[ ${return_val} -ne 0 ]] && \
     echo "WARNING: Terraform plan not applied successfully."
-elif [[  "${TF_MODE}" == "plan" ]]; then
-  echo "Code Testing..."
+#
+# elif [[  "${TF_MODE}" == "plan" ]]; then
+#   echo "Code Testing..."
+
 fi
 
 echo "JOB STATUS : ${msg} ${ERROR}"
